@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Veer Game – Color Trading Platform</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Poppins:wght@400;600;700;800;900&display=swap');
+
+#jai-club-wrapper {
+  --gold: #f5c842;
+  --orange: #ff7a1a;
+  --red: #e63030;
+  --green: #22c55e;
+  --blue: #3b82f6;
+  --tg: #229ED9;
+  --white: #ffffff;
+  --off: #f8fafc;
+  --text: #0f172a;
+  --muted: #64748b;
+  --border: rgba(0,0,0,.07);
+  --shadow: 0 4px 24px rgba(0,0,0,.07);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,.10);
+}
+
+#jai-club-wrapper * { margin:0; padding:0; box-sizing:border-box; }
+
+#jai-club-wrapper {
+  font-family:'Poppins',sans-serif;
+  background:#f0f4ff;
+  min-height:100vh;
+  position:relative;
+  overflow:hidden;
+  width:100%;
+}
+
+#jai-club-wrapper::before {
+  content:'';
+  position:absolute; inset:0;
+  background:
+    radial-gradient(ellipse 700px 500px at 20% 10%,rgba(245,200,66,.13) 0%,transparent 70%),
+    radial-gradient(ellipse 600px 400px at 80% 90%,rgba(59,130,246,.10) 0%,transparent 70%),
+    radial-gradient(ellipse 400px 300px at 70% 20%,rgba(34,197,94,.08) 0%,transparent 60%);
+  pointer-events:none; z-index:0;
+}
+
+#jai-club-wrapper .coins { position:absolute; inset:0; pointer-events:none; overflow:hidden; z-index:0; }
+#jai-club-wrapper .coin {
+  position:absolute; font-size:22px; opacity:.7;
+  animation:floatCoin linear infinite;
+  filter:drop-shadow(0 2px 6px rgba(0,0,0,.10));
+}
+
+#jai-club-wrapper .page {
+  position:relative; z-index:2;
+  max-width:420px; margin:auto;
+  padding:32px 16px 60px;
+  display:flex; flex-direction:column; align-items:center; gap:0;
+}
+
+#jai-club-wrapper .header-badge {
+  background:linear-gradient(135deg,#fff7e0,#fffbe8);
+  border:1.5px solid rgba(245,200,66,.5);
+  border-radius:30px; padding:6px 18px;
+  font-size:11px; font-weight:800; letter-spacing:2.5px;
+  color:#b45309; text-transform:uppercase;
+  margin-bottom:22px;
+  box-shadow:0 2px 12px rgba(245,200,66,.18);
+}
+
+#jai-club-wrapper .avatar-wrap { position:relative; width:120px; height:120px; }
+#jai-club-wrapper .avatar-ring {
+  position:absolute; inset:-5px; border-radius:50%;
+  background:conic-gradient(#f5c842,#ff6b1a,#e63030,#3b82f6,#22c55e,#f5c842);
+  animation:spin 3.5s linear infinite;
+}
+#jai-club-wrapper .avatar-ring-inner { position:absolute; inset:3px; border-radius:50%; background:#fff; }
+#jai-club-wrapper .avatar-img { position:absolute; inset:7px; border-radius:50%; overflow:hidden; }
+#jai-club-wrapper .avatar-img img { width:100%; height:100%; object-fit:cover; }
+
+#jai-club-wrapper .name {
+  margin-top:16px; font-family:'Nunito',sans-serif;
+  font-size:46px; font-weight:900;
+  background:linear-gradient(135deg,#e69b00,#ff6b1a,#e63030);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  animation:namePulse 2.5s infinite; letter-spacing:-1px;
+}
+#jai-club-wrapper .tagline { font-size:10.5px; letter-spacing:3.5px; margin-top:4px; color:var(--muted); font-weight:800; text-transform:uppercase; }
+
+#jai-club-wrapper .stats-row { display:flex; gap:10px; margin-top:20px; width:100%; }
+#jai-club-wrapper .stat-card {
+  flex:1; background:#fff; border-radius:16px; padding:14px 10px; text-align:center;
+  box-shadow:var(--shadow); border:1px solid var(--border);
+}
+#jai-club-wrapper .stat-num { font-size:20px; font-weight:900; color:var(--text); font-family:'Nunito',sans-serif; }
+#jai-club-wrapper .stat-label { font-size:10px; color:var(--muted); font-weight:700; margin-top:2px; }
+
+#jai-club-wrapper .ticker-wrap {
+  width:100%; margin-top:18px; background:#fff;
+  border:1.5px solid rgba(34,197,94,.25); border-radius:20px; padding:14px 16px;
+  box-shadow:var(--shadow);
+}
+#jai-club-wrapper .ticker-label {
+  font-size:11px; font-weight:800; color:#16a34a;
+  display:flex; align-items:center; gap:8px; margin-bottom:10px;
+  text-transform:uppercase; letter-spacing:1px;
+}
+#jai-club-wrapper .live-dot {
+  width:8px; height:8px; border-radius:50%; background:#22c55e;
+  box-shadow:0 0 0 3px rgba(34,197,94,.25); animation:blink 1.2s infinite;
+}
+#jai-club-wrapper .ticker-row { display:flex; align-items:center; gap:12px; animation:slideUp .4s ease; }
+#jai-club-wrapper .ticker-avatar {
+  width:38px; height:38px; border-radius:50%;
+  background:linear-gradient(135deg,#dcfce7,#bbf7d0);
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px; border:2px solid rgba(34,197,94,.3); flex-shrink:0;
+}
+#jai-club-wrapper .ticker-info { flex:1; }
+#jai-club-wrapper .ticker-name { font-size:13px; font-weight:800; color:var(--text); }
+#jai-club-wrapper .ticker-amount { font-size:12px; color:#16a34a; font-weight:700; margin-top:1px; }
+#jai-club-wrapper .ticker-time { font-size:10px; color:var(--muted); margin-top:2px; }
+#jai-club-wrapper .ticker-badge {
+  background:linear-gradient(135deg,#22c55e,#16a34a); padding:5px 12px; border-radius:20px;
+  font-size:11px; font-weight:800; color:#fff; white-space:nowrap;
+  box-shadow:0 3px 10px rgba(34,197,94,.3);
+}
+
+#jai-club-wrapper .btn {
+  display:flex; align-items:center; justify-content:center; gap:10px;
+  padding:16px 20px; border-radius:16px; font-size:16px; font-weight:800;
+  text-decoration:none; margin-top:12px; position:relative; overflow:hidden;
+  transition:transform .25s,box-shadow .25s; letter-spacing:.3px;
+}
+#jai-club-wrapper .btn:hover { transform:translateY(-3px); }
+#jai-club-wrapper .btn::before {
+  content:''; position:absolute; top:0; left:-100%; width:70%; height:100%;
+  background:rgba(255,255,255,.22); transform:skewX(-25deg); animation:shine 2.5s infinite;
+}
+#jai-club-wrapper .btn-orange {
+  background:linear-gradient(135deg,#ff8c00,#ff4500); color:#fff;
+  box-shadow:0 6px 20px rgba(255,100,0,.30);
+}
+#jai-club-wrapper .btn-orange:hover { box-shadow:0 10px 28px rgba(255,100,0,.40); }
+
+#jai-club-wrapper .timer-box {
+  width:100%; margin-top:12px;
+  background:linear-gradient(135deg,#1a1a2e,#16213e);
+  border-radius:18px; padding:18px 18px 14px;
+  border:1px solid rgba(255,255,255,.08);
+  box-shadow:0 8px 28px rgba(0,0,0,.20);
+  display:flex; flex-direction:column; align-items:center; gap:6px;
+}
+#jai-club-wrapper .timer-clock {
+  font-family:'Nunito',sans-serif;
+  font-size:42px; font-weight:900; letter-spacing:3px;
+  background:linear-gradient(135deg,#f5c842,#ff6b1a);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  line-height:1;
+}
+#jai-club-wrapper .timer-join-text {
+  font-size:13px; font-weight:800; letter-spacing:2px;
+  text-transform:uppercase; color:rgba(255,255,255,.6);
+  margin-top:4px;
+}
+
+#jai-club-wrapper .main-card {
+  width:100%; margin-top:18px; background:#fff; border-radius:24px; padding:22px 18px;
+  box-shadow:var(--shadow-lg); border:1px solid var(--border);
+}
+#jai-club-wrapper .card-title { font-size:22px; font-weight:900; text-align:center; color:var(--text); font-family:'Nunito',sans-serif; line-height:1.2; }
+#jai-club-wrapper .card-title span { background:linear-gradient(135deg,#ff7a1a,#e63030); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+#jai-club-wrapper .card-sub { font-size:13px; font-weight:600; text-align:center; margin-top:6px; color:var(--muted); }
+
+#jai-club-wrapper .feat-list { margin-top:16px; display:flex; flex-direction:column; gap:10px; }
+#jai-club-wrapper .feat-box {
+  background:var(--off); padding:13px 15px; border-radius:14px;
+  font-size:14px; font-weight:700; color:var(--text);
+  border:1px solid var(--border); display:flex; align-items:center; gap:10px;
+  transition:transform .2s,box-shadow .2s;
+}
+#jai-club-wrapper .feat-box:hover { transform:translateX(4px); box-shadow:var(--shadow); }
+#jai-club-wrapper .feat-icon { width:34px; height:34px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+#jai-club-wrapper .feat-icon.green { background:linear-gradient(135deg,#dcfce7,#bbf7d0); }
+#jai-club-wrapper .feat-icon.yellow { background:linear-gradient(135deg,#fef9c3,#fde68a); }
+#jai-club-wrapper .feat-icon.blue { background:linear-gradient(135deg,#dbeafe,#bfdbfe); }
+#jai-club-wrapper .feat-icon.orange { background:linear-gradient(135deg,#ffedd5,#fed7aa); }
+
+#jai-club-wrapper .divider { width:100%; margin:18px 0 0; display:flex; align-items:center; gap:12px; }
+#jai-club-wrapper .divider-line { flex:1; height:1px; background:var(--border); }
+#jai-club-wrapper .divider-text { font-size:11px; color:var(--muted); font-weight:700; letter-spacing:1.5px; white-space:nowrap; }
+
+#jai-club-wrapper .channel-box {
+  width:100%; margin-top:14px;
+  background:linear-gradient(145deg,#0f1c36,#1a3060); border-radius:22px; padding:16px 18px;
+  display:flex; align-items:center; gap:14px; text-decoration:none;
+  box-shadow:0 8px 30px rgba(15,28,54,.22); border:1px solid rgba(255,255,255,.08);
+  transition:transform .25s,box-shadow .25s;
+}
+#jai-club-wrapper .channel-box:hover { transform:translateY(-3px); box-shadow:0 14px 38px rgba(15,28,54,.30); }
+#jai-club-wrapper .ch-img-wrap { position:relative; width:54px; height:54px; flex-shrink:0; }
+#jai-club-wrapper .ch-img-ring {
+  position:absolute; inset:-3px; border-radius:50%;
+  background:conic-gradient(#f5c842,#ff6b1a,#22c55e,#3b82f6,#f5c842);
+  animation:spin 3s linear infinite;
+}
+#jai-club-wrapper .ch-img-inner { position:absolute; inset:3px; overflow:hidden; border-radius:50%; border:2px solid #fff; }
+#jai-club-wrapper .ch-img-inner img { width:100%; height:100%; object-fit:cover; }
+#jai-club-wrapper .ch-name { font-size:18px; font-weight:900; color:#fff; font-family:'Nunito',sans-serif; }
+#jai-club-wrapper .ch-desc { font-size:12px; color:rgba(255,255,255,.6); margin-top:3px; }
+#jai-club-wrapper .ch-arrow { margin-left:auto; font-size:20px; color:rgba(255,255,255,.4); }
+
+#jai-club-wrapper .trust-row { display:flex; gap:8px; margin-top:18px; width:100%; justify-content:center; flex-wrap:wrap; }
+#jai-club-wrapper .trust-badge {
+  background:#fff; border:1px solid var(--border); border-radius:30px; padding:6px 14px;
+  font-size:11px; font-weight:700; color:var(--muted);
+  display:flex; align-items:center; gap:6px; box-shadow:0 2px 8px rgba(0,0,0,.05);
+}
+
+#jai-club-wrapper .footer { margin-top:28px; font-size:11px; color:var(--muted); text-align:center; line-height:1.8; }
+
+@keyframes spin { 100% { transform:rotate(360deg); } }
+@keyframes blink { 0%,100% { opacity:1; } 50% { opacity:.2; } }
+@keyframes slideUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+@keyframes shine { 0% { left:-100%; } 60%,100% { left:120%; } }
+@keyframes namePulse {
+  0%,100% { filter:drop-shadow(0 0 6px rgba(245,200,66,.25)); }
+  50% { filter:drop-shadow(0 0 18px rgba(245,200,66,.6)); }
+}
+@keyframes floatCoin {
+  0% { opacity:0; transform:translateY(100vh) rotate(0deg); }
+  10% { opacity:.8; } 90% { opacity:.6; }
+  100% { opacity:0; transform:translateY(-120px) rotate(720deg); }
+}
+@keyframes fadeIn { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+
+#jai-club-wrapper .page > * { animation:fadeIn .5s ease both; }
+#jai-club-wrapper .page > *:nth-child(1) { animation-delay:.05s; }
+#jai-club-wrapper .page > *:nth-child(2) { animation-delay:.10s; }
+#jai-club-wrapper .page > *:nth-child(3) { animation-delay:.15s; }
+#jai-club-wrapper .page > *:nth-child(4) { animation-delay:.20s; }
+#jai-club-wrapper .page > *:nth-child(5) { animation-delay:.25s; }
+#jai-club-wrapper .page > *:nth-child(6) { animation-delay:.30s; }
+#jai-club-wrapper .page > *:nth-child(7) { animation-delay:.35s; }
+#jai-club-wrapper .page > *:nth-child(8) { animation-delay:.40s; }
+#jai-club-wrapper .page > *:nth-child(9) { animation-delay:.45s; }
+</style>
+
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '918926624253433');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=918926624253433&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
+
+</head>
+<body>
+
+<div id="jai-club-wrapper">
+  <div class="coins" id="coinsContainer"></div>
+
+  <div class="page">
+    <div class="header-badge">🏅 Trusted Color Trading Platform</div>
+
+    <!-- ✅ NEW IMAGE & NAME -->
+    <div class="avatar-wrap">
+      <div class="avatar-ring"></div>
+      <div class="avatar-ring-inner"></div>
+      <div class="avatar-img">
+        <img src="https://i.ibb.co/JW0wTJCT/file-00000000ad508230801036c649d026c1.png" alt="Veer Game">
+      </div>
+    </div>
+
+    <div class="name">Veer Game</div>
+    <div class="tagline">Color Trading Platform</div>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-num">50K+</div>
+        <div class="stat-label">Active Users</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">₹2Cr+</div>
+        <div class="stat-label">Paid Out</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">4.9★</div>
+        <div class="stat-label">Rating</div>
+      </div>
+    </div>
+
+    <div class="ticker-wrap">
+      <div class="ticker-label">
+        <div class="live-dot"></div>
+        Live Withdrawals
+      </div>
+      <div class="ticker-row" id="tickerRow">
+        <div class="ticker-avatar" id="tickerAvatar">💸</div>
+        <div class="ticker-info">
+          <div class="ticker-name" id="tickerName">Loading…</div>
+          <div class="ticker-amount" id="tickerAmount"></div>
+          <div class="ticker-time" id="tickerTime"></div>
+        </div>
+        <div class="ticker-badge">✓ Paid</div>
+      </div>
+    </div>
+
+    <a href="https://t.me/+ZL9Uti1fPCQwZGRl" class="btn btn-orange" style="width:100%;margin-top:18px;padding:20px;font-size:19px;border-radius:20px;box-shadow:0 8px 28px rgba(255,100,0,.40);">
+      🚀 Join Now on Telegram
+    </a>
+
+    <div class="timer-box">
+      <div class="timer-clock" id="timerClock">00:00:10</div>
+      <div class="timer-join-text">⚡ Join Fast</div>
+    </div>
+
+    <div class="main-card">
+      <div class="card-title">🔥 <span>New Color Trading</span> Platform</div>
+      <div class="card-sub">Earn Daily & Get Exciting Rewards 💰</div>
+
+      <div class="feat-list">
+        <div class="feat-box">
+          <div class="feat-icon green">✅</div>
+          Best Deals Available Every Day
+        </div>
+        <div class="feat-box">
+          <div class="feat-icon yellow">🎁</div>
+          Daily Free Gifts & Bonuses
+        </div>
+        <div class="feat-box">
+          <div class="feat-icon blue">🏆</div>
+          1–2 Level Winning System
+        </div>
+        <div class="feat-box">
+          <div class="feat-icon orange">⚡</div>
+          Fast & Easy Earnings
+        </div>
+      </div>
+    </div>
+
+    <div class="divider">
+      <div class="divider-line"></div>
+      <div class="divider-text">OFFICIAL CHANNEL</div>
+      <div class="divider-line"></div>
+    </div>
+
+    <!-- ✅ NEW IMAGE & NAME in channel box -->
+    <a href="https://t.me/+ZL9Uti1fPCQwZGRl" class="channel-box">
+      <div class="ch-img-wrap">
+        <div class="ch-img-ring"></div>
+        <div class="ch-img-inner">
+          <img src="https://i.ibb.co/JW0wTJCT/file-00000000ad508230801036c649d026c1.png" alt="Veer Game">
+        </div>
+      </div>
+      <div>
+        <div class="ch-name">Veer Game</div>
+        <div class="ch-desc">Join Official Telegram Channel</div>
+      </div>
+      <div class="ch-arrow">›</div>
+    </a>
+
+    <div class="trust-row">
+      <div class="trust-badge">🔒 Secure</div>
+      <div class="trust-badge">⚡ Instant Withdrawal</div>
+      <div class="trust-badge">🌐 24/7 Support</div>
+    </div>
+
+    <!-- ✅ NAME updated in footer -->
+    <div class="footer">
+      © 2026 Veer Game • All Rights Reserved<br>
+      Color Trading Platform
+    </div>
+
+  </div>
+</div>
+
+<script>
+(function(){
+  const container = document.getElementById('coinsContainer');
+  if(!container) return;
+  const emojis = ['💰','💵','🪙','💎','🤑','✨','🎯','🏆','💸'];
+  function spawn(){
+    const el = document.createElement('div');
+    el.className = 'coin';
+    el.innerHTML = emojis[Math.floor(Math.random()*emojis.length)];
+    el.style.left = Math.random()*100 + '%';
+    el.style.fontSize = (14 + Math.random()*16) + 'px';
+    const dur = 6 + Math.random()*9;
+    el.style.animationDuration = dur + 's';
+    el.style.animationDelay = (Math.random()*2) + 's';
+    container.appendChild(el);
+    setTimeout(()=> el.remove(), (dur+3)*1000);
+  }
+  for(let i=0;i<16;i++) spawn();
+  setInterval(spawn, 1800);
+})();
+
+(function(){
+  const names = ['Rahul K.','Priya S.','Amit R.','Sana M.','Vikram T.','Neha J.','Ravi P.','Zara B.','Mohan L.','Deepa V.'];
+  const amounts = [120,250,500,175,300,450,220,610,530,380];
+  const emojis = ['👤','👩','👨','🧑','👱','🧔','👩‍💼','🧑‍💼'];
+  let idx = 0;
+  function update(){
+    const row = document.getElementById('tickerRow');
+    if(!row) return;
+    row.style.animation = 'none'; void row.offsetWidth;
+    row.style.animation = 'slideUp .5s ease';
+    document.getElementById('tickerAvatar').innerHTML = emojis[idx % emojis.length];
+    document.getElementById('tickerName').innerHTML = names[idx % names.length] + ' withdrew successfully';
+    document.getElementById('tickerAmount').innerHTML = '₹' + amounts[idx % amounts.length] + ' withdrawn';
+    document.getElementById('tickerTime').innerHTML = (Math.floor(Math.random()*4)+1) + ' min ago';
+    idx++;
+  }
+  update();
+  setInterval(update, 3000);
+})();
+
+(function(){
+  const TOTAL = 10;
+  const TARGET = 'https://t.me/+ZL9Uti1fPCQwZGRl';
+  const clockEl = document.getElementById('timerClock');
+  let remaining = TOTAL;
+  function fmt(s){
+    const mm = Math.floor(s/60);
+    const ss = s % 60;
+    return '00:' + String(mm).padStart(2,'0') + ':' + String(ss).padStart(2,'0');
+  }
+  clockEl.textContent = fmt(remaining);
+  function tick(){
+    remaining--;
+    clockEl.textContent = fmt(remaining);
+    if(remaining <= 0){ window.location.href = TARGET; }
+  }
+  setInterval(tick, 1000);
+})();
+</script>
+
+</body>
+</html>
